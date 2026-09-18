@@ -1,4 +1,6 @@
+import logging
 import random
+import time
 import uuid
 from pathlib import Path
 
@@ -8,6 +10,7 @@ from fastapi.staticfiles import StaticFiles
 
 
 app = FastAPI(title="Polling Game Demo")
+logging.getLogger("uvicorn.access").disabled = True
 
 STATIC_DIR = Path(__file__).parent / "static"
 GAME_WIDTH = 640
@@ -16,6 +19,14 @@ PLAYER_SIZE = 28
 
 # The polling version keeps the same shared game state in server memory.
 players: dict[str, dict[str, int | str]] = {}
+metrics_started_at = time.monotonic()
+metrics = {
+    "totalApiRequests": 0,
+    "joinRequests": 0,
+    "moveRequests": 0,
+    "stateRequests": 0,
+    "leaveRequests": 0,
+}
 
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
@@ -26,8 +37,33 @@ async def index() -> FileResponse:
     return FileResponse(STATIC_DIR / "index.html")
 
 
+def metrics_snapshot() -> dict[str, int]:
+    return {
+        "uptimeSeconds": int(time.monotonic() - metrics_started_at),
+        "connectedPlayers": len(players),
+        **metrics,
+    }
+
+
+@app.get("/api/metrics")
+async def get_metrics() -> dict[str, int]:
+    return metrics_snapshot()
+
+
+@app.post("/api/metrics/reset")
+async def reset_metrics() -> dict[str, bool]:
+    global metrics_started_at
+
+    metrics_started_at = time.monotonic()
+    for metric_name in metrics:
+        metrics[metric_name] = 0
+    return {"ok": True}
+
+
 @app.post("/api/join")
 async def join_game(data: dict[str, object]) -> dict[str, str]:
+    metrics["totalApiRequests"] += 1
+    metrics["joinRequests"] += 1
     name = str(data.get("name", "")).strip()[:30]
     if not name:
         raise HTTPException(status_code=400, detail="A player name is required.")
@@ -39,11 +75,14 @@ async def join_game(data: dict[str, object]) -> dict[str, str]:
         "x": random.randint(0, GAME_WIDTH - PLAYER_SIZE),
         "y": random.randint(0, GAME_HEIGHT - PLAYER_SIZE),
     }
+    print(f"[player joined] {name}")
     return {"playerId": player_id}
 
 
 @app.post("/api/move")
 async def move_player(data: dict[str, object]) -> dict[str, bool]:
+    metrics["totalApiRequests"] += 1
+    metrics["moveRequests"] += 1
     player_id = str(data.get("playerId", ""))
     player = players.get(player_id)
     if not player:
@@ -56,11 +95,17 @@ async def move_player(data: dict[str, object]) -> dict[str, bool]:
 
 @app.get("/api/state")
 async def game_state() -> dict[str, list[dict[str, int | str]]]:
+    metrics["totalApiRequests"] += 1
+    metrics["stateRequests"] += 1
     return {"players": list(players.values())}
 
 
 @app.post("/api/leave")
 async def leave_game(data: dict[str, object]) -> dict[str, bool]:
+    metrics["totalApiRequests"] += 1
+    metrics["leaveRequests"] += 1
     player_id = str(data.get("playerId", ""))
-    players.pop(player_id, None)
+    player = players.pop(player_id, None)
+    if player:
+        print(f"[player left] {player['name']}")
     return {"ok": True}

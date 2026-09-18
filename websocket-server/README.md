@@ -48,3 +48,7 @@ Use WASD or the arrow keys to send a move message:
 ```
 
 The server associates the message with the WebSocket connection, clamps the position to the game area, then broadcasts the updated state to every active connection. Closing a connection removes that player and broadcasts the reduced state. The visible workshop broadcast loop is in `app.py` inside `broadcast_state`.
+
+## Metrics
+
+`GET /api/metrics` returns the WebSocket connection, message, player, and uptime counters. `POST /api/metrics/reset` resets those counters without disconnecting players or clearing the game state.

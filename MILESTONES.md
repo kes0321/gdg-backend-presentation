@@ -144,7 +144,7 @@ Verification:
 
 ## M05 — Metrics and Demo Instrumentation
 
-Status: TODO
+Status: COMPLETE
 
 Add to all relevant projects:
 

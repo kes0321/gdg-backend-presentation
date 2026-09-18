@@ -27,7 +27,7 @@ pip install -r requirements.txt
 uvicorn app:app --host 0.0.0.0 --port 8000
 ```
 
-Open <http://localhost:8000> in two browser windows or tabs to simulate two players.
+Open <http://localhost:8000> in two browser windows or tabs to simulate two players. The polling server disables Uvicorn access logs in `app.py` so frequent state polls do not flood the terminal; player joins and leaves remain logged.
 
 ## HTTP API
 
@@ -40,4 +40,6 @@ Open <http://localhost:8000> in two browser windows or tabs to simulate two play
 
 `static/game.js` defines `const POLL_INTERVAL_MS = 100;` near the top. Change it to `1000`, `500`, or `100` before reloading the page to demonstrate different polling frequencies.
 
-Metrics endpoints are intentionally introduced in M05, not in this milestone.
+## Metrics
+
+`GET /api/metrics` returns request, player, and uptime counters. `POST /api/metrics/reset` resets those counters without removing players or clearing the game state.
