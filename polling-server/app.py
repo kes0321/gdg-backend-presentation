@@ -39,6 +39,13 @@ async def index() -> FileResponse:
     return FileResponse(STATIC_DIR / "index.html")
 
 
+@app.get("/metrics")
+@app.get("/polling/metrics")
+async def metrics_page() -> FileResponse:
+    """Serve the simple metrics dashboard."""
+    return FileResponse(STATIC_DIR / "metrics.html")
+
+
 def metrics_snapshot() -> dict[str, int]:
     return {
         "uptimeSeconds": int(time.monotonic() - metrics_started_at),

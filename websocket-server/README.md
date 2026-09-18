@@ -65,3 +65,5 @@ Use WASD or arrow keys to move. The server clamps positions to the game area and
 ## Metrics
 
 `GET /api/metrics` reports uptime, players, WebSocket connections, and incoming/outgoing message counters. `POST /api/metrics/reset` resets counters without disconnecting players or clearing game state.
+
+Open `/websocket/metrics` to view the current metrics and reset them with a button.

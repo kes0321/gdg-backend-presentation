@@ -43,3 +43,5 @@ Open <http://localhost:8000> in two browser windows or tabs to simulate two play
 ## Metrics
 
 `GET /api/metrics` reports uptime, players, total gameplay API requests, and per-endpoint request counts. `POST /api/metrics/reset` resets counters without removing players or clearing game state.
+
+Open `/polling/metrics` to view the current metrics and reset them with a button.
