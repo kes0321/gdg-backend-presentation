@@ -17,11 +17,12 @@
         </form>
       </section>
 
-      <section class="game-panel" aria-label="Game area">
-        <div class="game-header">Players: 0</div>
+      <section id="game-panel" class="game-panel hidden" aria-label="Game area">
+        <div id="player-count" class="game-header">Players: 0</div>
         <div id="game-area" class="game-area"></div>
         <p class="controls">Controls: WASD / Arrow Keys</p>
       </section>
+      <p id="connection-status" class="connection-status" aria-live="polite"></p>
     </main>
     <script src="/static/game.js"></script>
   </body>

@@ -50,7 +50,7 @@ Verification:
 
 ## M02 — WebSocket Join and Connection
 
-Status: TODO
+Status: COMPLETE
 
 Implement in both WebSocket projects:
 

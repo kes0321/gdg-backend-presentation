@@ -1,6 +1,6 @@
 # WebSocket Game Demo
 
-This directory is the WebSocket version of the GDGoC polling-versus-WebSocket demo. M01 provides the runnable FastAPI and frontend skeleton only; multiplayer behavior is added in later milestones.
+This directory is the WebSocket version of the GDGoC polling-versus-WebSocket demo. M02 adds player joining and connection cleanup; movement and live broadcasts are added in a later milestone.
 
 ## Requirements
 
@@ -29,6 +29,16 @@ pip install -r requirements.txt
 uvicorn app:app --host 0.0.0.0 --port 8000
 ```
 
-Open <http://localhost:8000>. The name-entry screen and empty game area should load.
+Open <http://localhost:8000>, enter a name, and select **Join Game**. Open another browser window or tab to join as another player.
 
-Future milestones will add the `/ws` endpoint, WebSocket message flow, multiplayer rendering, and metrics.
+## M02 WebSocket flow
+
+The frontend opens `ws://localhost:8000/ws` (or `wss` under HTTPS) and sends:
+
+```json
+{ "type": "join", "name": "Alice" }
+```
+
+The server accepts the connection, generates the player ID, stores the player in memory, and returns a state snapshot containing `id`, `name`, `x`, and `y` for each player. Closing the connection removes that player from server memory.
+
+Movement messages and the all-client broadcast loop are intentionally deferred to M03.
