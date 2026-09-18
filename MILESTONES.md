@@ -268,7 +268,7 @@ After verification:
 
 ## M08 — Generate Presentation PDF
 
-Status: TODO
+Status: COMPLETE
 
 Read the completed:
 
@@ -318,6 +318,15 @@ After verification:
 * mark M08 complete
 * create a local Git commit
 * do not begin M09
+
+### Runtime fallback
+
+M08 must not fail solely because a presentation-specific artifact runtime is unavailable.
+
+The deliverable is the PDF itself.
+
+Use an available local PDF-generation approach that satisfies `PRESENTATION_SPEC.md`. Prefer simple and deterministic generation over attempting to reproduce a PowerPoint authoring environment.
+
 
 ## M09 — Final Presentation Verification
 
