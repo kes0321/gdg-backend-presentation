@@ -211,3 +211,176 @@ Do not deploy to Google Cloud yet.
 Do not create the student TODO repository yet.
 
 Finish with a concise final project report.
+
+## M07 — Presentation Structure and Speaker Script
+
+Status: COMPLETE
+
+Read:
+
+* `PRESENTATION_SPEC.md`
+* relevant code and README files from all three completed projects
+
+Create:
+
+```text
+presentation/script.txt
+```
+
+Do NOT create the final PDF yet.
+
+The script must define the complete presentation slide-by-slide.
+
+For every slide include:
+
+* slide number
+* slide title
+* intended slide content
+* what the presenter should say
+* demo or hands-on action if applicable
+* approximate time allocation when useful
+
+The script must cover the complete 90-minute session defined in `PRESENTATION_SPEC.md`.
+
+Important:
+
+* Ground implementation-specific statements in the actual source code.
+* Identify the exact source locations suitable for WebSocket and Polling code snippets.
+* Clearly explain why `await websocket.receive_json()` is not HTTP polling.
+* Include the async I/O / event loop / OS socket / epoll connection at an appropriate level.
+* Do not fabricate benchmark results that have not been measured.
+* For the final Polling vs WebSocket live comparison, describe which metrics will be observed during the live experiment.
+
+Verification:
+
+* total session fits approximately 90 minutes
+* hands-on exercise timing is realistic
+* presentation follows one coherent narrative
+* all major technical claims are accurate
+* slide count is reasonable for the allotted speaking time
+* live demo and hands-on transitions are explicitly scripted
+
+After verification:
+
+* mark M07 complete
+* create a local Git commit
+* do not begin M08
+
+## M08 — Generate Presentation PDF
+
+Status: TODO
+
+Read the completed:
+
+```text
+presentation/script.txt
+```
+
+Generate:
+
+```text
+presentation/presentation.pdf
+```
+
+The PDF must follow `PRESENTATION_SPEC.md`.
+
+Requirements:
+
+* 16:9 landscape
+* white background
+* simple technical presentation style
+* large readable typography
+* concise slide text
+* simple diagrams where useful
+* actual source snippets where specified
+* slide numbers
+* Korean text rendered correctly
+* no unnecessary decoration
+
+The slides and `script.txt` must remain aligned.
+
+The PDF should support the speaker rather than duplicate the entire script.
+
+Do not fill slides with paragraphs from the speaker notes.
+
+Verification:
+
+* PDF opens successfully
+* page count matches the script
+* slide numbering matches
+* no clipping or overflow
+* code is readable
+* diagrams are readable
+* Korean glyphs render correctly
+
+After verification:
+
+* mark M08 complete
+* create a local Git commit
+* do not begin M09
+
+## M09 — Final Presentation Verification
+
+Status: TODO
+
+Perform a final presentation review.
+
+Inspect every page of:
+
+```text
+presentation/presentation.pdf
+```
+
+and cross-check it with:
+
+```text
+presentation/script.txt
+```
+
+Verify the complete narrative:
+
+1. public WebSocket game demo
+2. multiplayer communication problem
+3. HTTP request-response limitation
+4. polling
+5. polling latency/request-frequency tradeoff
+6. Long Polling and SSE
+7. WebSocket
+8. HTTP Upgrade handshake
+9. persistent TCP connection and WebSocket frames
+10. how the server waits for socket data
+11. async/await, event loop, socket readiness, and epoll context
+12. actual FastAPI WebSocket implementation
+13. hands-on broadcast exercise
+14. Polling implementation
+15. public Polling demo
+16. live metrics comparison
+17. appropriate use cases for HTTP vs WebSocket
+18. next game-server problems such as concurrency, tick/state synchronization, latency, and server authority
+
+Check technical accuracy especially around:
+
+* TCP vs HTTP vs WebSocket
+* WebSocket frames
+* `await`
+* event loops
+* epoll
+* server push
+* polling request behavior
+
+Do not claim benchmark numbers unless they are actual measured values.
+
+Ensure the final `presentation/` directory contains exactly:
+
+```text
+presentation.pdf
+script.txt
+```
+
+If any issue is found, fix it before completing M09.
+
+Finally:
+
+* mark M09 complete
+* create a local Git commit
+* report the final page count and approximate presentation duration
