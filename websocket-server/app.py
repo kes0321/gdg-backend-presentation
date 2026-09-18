@@ -29,6 +29,8 @@ metrics = {
 }
 
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
+# Keep the deployment URL working when the app is accessed directly in development.
+app.mount("/websocket/static", StaticFiles(directory=STATIC_DIR), name="websocket-static")
 
 
 @app.get("/")
