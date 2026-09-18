@@ -5,9 +5,14 @@ const gamePanel = document.querySelector("#game-panel");
 const gameArea = document.querySelector("#game-area");
 const playerCount = document.querySelector("#player-count");
 const connectionStatus = document.querySelector("#connection-status");
+const MOVEMENT_STEP = 10;
+const GAME_WIDTH = 640;
+const GAME_HEIGHT = 360;
+const PLAYER_SIZE = 28;
 
 let socket;
 let playerId;
+let knownPlayers = [];
 
 joinForm.addEventListener("submit", (event) => {
   event.preventDefault();
@@ -36,6 +41,7 @@ joinForm.addEventListener("submit", (event) => {
 });
 
 function renderPlayers(players) {
+  knownPlayers = players;
   playerCount.textContent = `Players: ${players.length}`;
   gameArea.replaceChildren();
 
@@ -51,9 +57,35 @@ function renderPlayers(players) {
     playerElement.append(nameElement);
     gameArea.append(playerElement);
 
-    if (player.name === nameInput.value.trim()) playerId = player.id;
+    if (!playerId && player.name === nameInput.value.trim()) playerId = player.id;
   }
 
   joinPanel.classList.add("hidden");
   gamePanel.classList.remove("hidden");
 }
+
+document.addEventListener("keydown", (event) => {
+  if (!socket || socket.readyState !== WebSocket.OPEN || !playerId) return;
+
+  const moveByKey = {
+    w: [0, -MOVEMENT_STEP],
+    arrowup: [0, -MOVEMENT_STEP],
+    s: [0, MOVEMENT_STEP],
+    arrowdown: [0, MOVEMENT_STEP],
+    a: [-MOVEMENT_STEP, 0],
+    arrowleft: [-MOVEMENT_STEP, 0],
+    d: [MOVEMENT_STEP, 0],
+    arrowright: [MOVEMENT_STEP, 0],
+  };
+  const movement = moveByKey[event.key.toLowerCase()];
+  if (!movement) return;
+
+  event.preventDefault();
+  const localPlayer = knownPlayers.find((player) => player.id === playerId);
+  if (!localPlayer) return;
+
+  localPlayer.x = Math.max(0, Math.min(localPlayer.x + movement[0], GAME_WIDTH - PLAYER_SIZE));
+  localPlayer.y = Math.max(0, Math.min(localPlayer.y + movement[1], GAME_HEIGHT - PLAYER_SIZE));
+  renderPlayers(knownPlayers);
+  socket.send(JSON.stringify({ type: "move", x: localPlayer.x, y: localPlayer.y }));
+});

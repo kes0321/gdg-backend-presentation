@@ -28,6 +28,15 @@ async def index() -> FileResponse:
     return FileResponse(STATIC_DIR / "index.html")
 
 
+async def broadcast_state() -> None:
+    """Send the current player state to every connected WebSocket client."""
+    payload = {"type": "state", "players": list(players.values())}
+
+    # M03 workshop focus: broadcast the updated state to every active client.
+    for connection in active_connections:
+        await connection.send_json(payload)
+
+
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket) -> None:
     await websocket.accept()
@@ -37,27 +46,34 @@ async def websocket_endpoint(websocket: WebSocket) -> None:
         while True:
             data = await websocket.receive_json()
 
-            if data.get("type") != "join" or websocket in connection_player_ids:
-                continue
+            if data.get("type") == "join" and websocket not in connection_player_ids:
+                name = str(data.get("name", "")).strip()[:30]
+                if not name:
+                    continue
 
-            name = str(data.get("name", "")).strip()[:30]
-            if not name:
-                continue
+                player_id = uuid.uuid4().hex
+                players[player_id] = {
+                    "id": player_id,
+                    "name": name,
+                    "x": random.randint(0, GAME_WIDTH - PLAYER_SIZE),
+                    "y": random.randint(0, GAME_HEIGHT - PLAYER_SIZE),
+                }
+                connection_player_ids[websocket] = player_id
+                await broadcast_state()
 
-            player_id = uuid.uuid4().hex
-            players[player_id] = {
-                "id": player_id,
-                "name": name,
-                "x": random.randint(0, GAME_WIDTH - PLAYER_SIZE),
-                "y": random.randint(0, GAME_HEIGHT - PLAYER_SIZE),
-            }
-            connection_player_ids[websocket] = player_id
+            elif data.get("type") == "move":
+                player_id = connection_player_ids.get(websocket)
+                if not player_id:
+                    continue
 
-            # M02 sends the joining client a snapshot. M03 adds the broadcast loop.
-            await websocket.send_json({"type": "state", "players": list(players.values())})
+                player = players[player_id]
+                player["x"] = max(0, min(int(data.get("x", player["x"])), GAME_WIDTH - PLAYER_SIZE))
+                player["y"] = max(0, min(int(data.get("y", player["y"])), GAME_HEIGHT - PLAYER_SIZE))
+                await broadcast_state()
 
     except WebSocketDisconnect:
         active_connections.remove(websocket)
         player_id = connection_player_ids.pop(websocket, None)
         if player_id:
             players.pop(player_id, None)
+            await broadcast_state()

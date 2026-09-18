@@ -79,7 +79,7 @@ Verification:
 
 ## M03 — WebSocket Movement and Broadcast
 
-Status: TODO
+Status: COMPLETE
 
 Implement:
 
