@@ -9,6 +9,7 @@ const MOVEMENT_STEP = 10;
 const GAME_WIDTH = 640;
 const GAME_HEIGHT = 360;
 const PLAYER_SIZE = 28;
+const WEBSOCKET_PATH = "/websocket/ws";
 
 let socket;
 let playerId;
@@ -20,7 +21,7 @@ joinForm.addEventListener("submit", (event) => {
   if (!name) return;
 
   const protocol = window.location.protocol === "https:" ? "wss" : "ws";
-  socket = new WebSocket(`${protocol}://${window.location.host}/ws`);
+  socket = new WebSocket(`${protocol}://${window.location.host}${WEBSOCKET_PATH}`);
 
   socket.addEventListener("open", () => {
     socket.send(JSON.stringify({ type: "join", name }));

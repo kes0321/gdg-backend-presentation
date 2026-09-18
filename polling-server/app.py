@@ -48,11 +48,13 @@ def metrics_snapshot() -> dict[str, int]:
 
 
 @app.get("/api/metrics")
+@app.get("/polling/api/metrics")
 async def get_metrics() -> dict[str, int]:
     return metrics_snapshot()
 
 
 @app.post("/api/metrics/reset")
+@app.post("/polling/api/metrics/reset")
 async def reset_metrics() -> dict[str, bool]:
     global metrics_started_at
 
@@ -63,6 +65,7 @@ async def reset_metrics() -> dict[str, bool]:
 
 
 @app.post("/api/join")
+@app.post("/polling/api/join")
 async def join_game(data: dict[str, object]) -> dict[str, str]:
     metrics["totalApiRequests"] += 1
     metrics["joinRequests"] += 1
@@ -82,6 +85,7 @@ async def join_game(data: dict[str, object]) -> dict[str, str]:
 
 
 @app.post("/api/move")
+@app.post("/polling/api/move")
 async def move_player(data: dict[str, object]) -> dict[str, bool]:
     metrics["totalApiRequests"] += 1
     metrics["moveRequests"] += 1
@@ -96,6 +100,7 @@ async def move_player(data: dict[str, object]) -> dict[str, bool]:
 
 
 @app.get("/api/state")
+@app.get("/polling/api/state")
 async def game_state() -> dict[str, list[dict[str, int | str]]]:
     metrics["totalApiRequests"] += 1
     metrics["stateRequests"] += 1
@@ -103,6 +108,7 @@ async def game_state() -> dict[str, list[dict[str, int | str]]]:
 
 
 @app.post("/api/leave")
+@app.post("/polling/api/leave")
 async def leave_game(data: dict[str, object]) -> dict[str, bool]:
     metrics["totalApiRequests"] += 1
     metrics["leaveRequests"] += 1

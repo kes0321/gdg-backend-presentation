@@ -3,6 +3,7 @@ const MOVEMENT_STEP = 10;
 const GAME_WIDTH = 640;
 const GAME_HEIGHT = 360;
 const PLAYER_SIZE = 28;
+const API_BASE_PATH = "/polling/api";
 
 const joinForm = document.querySelector("#join-form");
 const nameInput = document.querySelector("#player-name");
@@ -22,7 +23,7 @@ joinForm.addEventListener("submit", async (event) => {
   if (!name) return;
 
   try {
-    const response = await fetch("/api/join", {
+    const response = await fetch(`${API_BASE_PATH}/join`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name }),
@@ -41,7 +42,7 @@ joinForm.addEventListener("submit", async (event) => {
 
 async function pollState() {
   try {
-    const response = await fetch("/api/state");
+    const response = await fetch(`${API_BASE_PATH}/state`);
     if (!response.ok) throw new Error("State request failed");
     const state = await response.json();
     renderPlayers(state.players);
@@ -94,7 +95,7 @@ document.addEventListener("keydown", async (event) => {
   renderPlayers(knownPlayers);
 
   try {
-    await fetch("/api/move", {
+    await fetch(`${API_BASE_PATH}/move`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ playerId, x: localPlayer.x, y: localPlayer.y }),
@@ -108,7 +109,7 @@ window.addEventListener("beforeunload", () => {
   window.clearInterval(pollTimer);
   if (!playerId) return;
 
-  fetch("/api/leave", {
+  fetch(`${API_BASE_PATH}/leave`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ playerId }),

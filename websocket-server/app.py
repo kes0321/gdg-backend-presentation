@@ -49,11 +49,13 @@ def metrics_snapshot() -> dict[str, int]:
 
 
 @app.get("/api/metrics")
+@app.get("/websocket/api/metrics")
 async def get_metrics() -> dict[str, int]:
     return metrics_snapshot()
 
 
 @app.post("/api/metrics/reset")
+@app.post("/websocket/api/metrics/reset")
 async def reset_metrics() -> dict[str, bool]:
     global metrics_started_at
 
@@ -74,6 +76,7 @@ async def broadcast_state() -> None:
 
 
 @app.websocket("/ws")
+@app.websocket("/websocket/ws")
 async def websocket_endpoint(websocket: WebSocket) -> None:
     await websocket.accept()
     active_connections.append(websocket)
